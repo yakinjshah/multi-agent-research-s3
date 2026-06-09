@@ -81,11 +81,19 @@ Your research notes should follow this DATA-CENTRIC format:
 - [Trend 1 with numbers]
 - [Trend 2 with numbers]
 
+## Conflicting statistics (if any)
+- [Metric]: [Value A] ([Source A]) vs [Value B] ([Source B]) — flag for report-writer
+
 ## Sources
 - [Source 1]: URL
 - [Source 2]: URL
 ```
 </output_format>
+
+<conflict_flagging>
+If WebSearch returns different numbers for the same metric from different sources, record BOTH values in a "Conflicting statistics" section. Never silently pick one. Example:
+- Global EV market size: $384B (IEA 2025) vs $412B (BloombergNEF 2025)
+</conflict_flagging>
 
 <quality_standards>
 - MANDATORY: Use WebSearch tool 5-10 times before writing anything

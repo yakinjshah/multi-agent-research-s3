@@ -45,6 +45,7 @@ async def chat():
     researcher_prompt = load_prompt("researcher.txt")
     data_analyst_prompt = load_prompt("data_analyst.txt")
     report_writer_prompt = load_prompt("report_writer.txt")
+    fact_checker_prompt = load_prompt("fact_checker.txt")
 
     # Initialize subagent tracker with transcript writer and session directory
     tracker = SubagentTracker(transcript_writer=transcript, session_dir=session_dir)
@@ -87,7 +88,18 @@ async def chat():
             tools=["Skill", "Write", "Glob", "Read", "Bash"],
             prompt=report_writer_prompt,
             model="haiku"
-        )
+        ),
+        "fact-checker": AgentDefinition(
+            description=(
+                "Use this agent AFTER researchers finish and BEFORE the data-analyst. "
+                "The fact-checker reads files/research_notes/, validates source citations, "
+                "flags missing URLs, and records conflicting statistics for the report-writer. "
+                "Writes validation output to files/fact_checks/."
+            ),
+            tools=["Glob", "Read", "Write"],
+            prompt=fact_checker_prompt,
+            model="haiku"
+        ),
     }
 
     # Set up hooks for tracking

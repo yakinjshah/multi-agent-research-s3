@@ -110,3 +110,16 @@ print(f"PDF saved to: files/reports/topic_report_YYYYMMDD.pdf")
 - Every claim must have a citation (source/URL when available)
 - Include specific data and statistics from files/data/ when available
 </requirements>
+
+<conflict_handling>
+When two research notes or fact-check summaries give different numbers for the same metric, you MUST show BOTH values with separate source attribution. Do not pick one silently.
+
+Example format in the report body:
+"Market size: $384B (IEA 2025) vs $412B (BloombergNEF 2025) — sources disagree."
+
+Rules:
+- Scan files/research_notes/ and files/fact_checks/ for flagged conflicts
+- Present conflicting statistics side by side in Key Findings or a "Contested Findings" subsection
+- Cite each source separately; never merge conflicting numbers into a single figure
+- If fact-check notes flag a conflict, preserve both cited values in the PDF
+</conflict_handling>
