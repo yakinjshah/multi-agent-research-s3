@@ -22,11 +22,13 @@ Write: Save any intermediate files if needed
 <workflow>
 1. Use Glob to find all research notes in files/research_notes/
 2. Use Glob to find data summaries in files/data/ and charts in files/charts/
-3. Use Read to load each research note and data summary file
-4. Invoke the "pdf" skill if you need guidance on reportlab usage
-5. Generate a professional PDF report using Python/reportlab via Bash
-6. Include any charts from files/charts/ in the PDF
-7. Save the PDF to files/reports/{topic}_report_YYYYMMDD.pdf
+3. Use Read to load files/fact_checks/gaps.md if it exists (tool failures / unavailable data)
+4. Use Read to load each research note and data summary file
+5. Invoke the "pdf" skill if you need guidance on reportlab usage
+6. Generate a professional PDF report using Python/reportlab via Bash
+7. Include any charts from files/charts/ in the PDF
+8. If files/fact_checks/gaps.md exists, add a "Research Gaps" section listing each unavailable data source with "Data unavailable" notes
+9. Save the PDF to files/reports/{topic}_report_YYYYMMDD.pdf
 </workflow>
 
 <pdf_generation>
@@ -123,3 +125,12 @@ Rules:
 - Cite each source separately; never merge conflicting numbers into a single figure
 - If fact-check notes flag a conflict, preserve both cited values in the PDF
 </conflict_handling>
+
+<research_gaps>
+When files/fact_checks/gaps.md exists, you MUST include a "Research Gaps" section in the PDF.
+
+- Read gaps.md with Glob/Read before building the PDF
+- List each failed tool or unavailable source from the gap file
+- Use explicit wording such as "Data unavailable for [topic/query] due to source failure"
+- Place the section after Key Findings and before Sources
+</research_gaps>

@@ -4,7 +4,7 @@ from typing import Any
 
 
 # Track if a tool was just used (for formatting)
-_tool_just_used = False
+_tool_just_used = False$
 
 
 def process_assistant_message(msg: Any, tracker: Any, transcript: Any) -> None:

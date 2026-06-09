@@ -65,9 +65,13 @@ class SubagentTracker:
 
         # Tool call detail log (JSONL format)
         self.tool_log_file = None
+        self.gaps_file: Optional[Path] = None
         if session_dir:
             tool_log_path = session_dir / "tool_calls.jsonl"
             self.tool_log_file = open(tool_log_path, "w", encoding="utf-8")
+            gaps_dir = session_dir / "files" / "fact_checks"
+            gaps_dir.mkdir(parents=True, exist_ok=True)
+            self.gaps_file = gaps_dir / "gaps.md"
 
         logger.debug("SubagentTracker initialized")
 
@@ -178,6 +182,35 @@ class SubagentTracker:
             self.tool_log_file.write(json.dumps(log_entry) + "\n")
             self.tool_log_file.flush()
 
+    def _append_gap_record(
+        self,
+        tool_name: str,
+        error: str,
+        agent_id: str,
+        tool_input: Optional[Dict[str, Any]] = None,
+    ):
+        """Persist tool failures so report-writer can surface Research Gaps."""
+        if not self.gaps_file:
+            return
+
+        query_hint = ""
+        if tool_input and "query" in tool_input:
+            query_hint = f" (query: {tool_input['query']})"
+
+        line = (
+            f"- **{tool_name}** failed for {agent_id}{query_hint}: "
+            f"data unavailable — {error}\n"
+        )
+        header = "# Research Gaps\n\nTool failures recorded during research:\n\n"
+        if self.gaps_file.exists():
+            existing = self.gaps_file.read_text(encoding="utf-8")
+            if line.strip() not in existing:
+                with open(self.gaps_file, "a", encoding="utf-8") as f:
+                    f.write(line)
+        else:
+            with open(self.gaps_file, "w", encoding="utf-8") as f:
+                f.write(header + line)
+
     async def pre_tool_use_hook(self, hook_input, tool_use_id, context):
         """Hook callback for PreToolUse events - captures tool calls."""
         tool_name = hook_input['tool_name']
@@ -249,6 +282,12 @@ class SubagentTracker:
             session = self.sessions.get(record.parent_tool_use_id)
             if session:
                 logger.warning(f"[{session.subagent_id}] Tool {record.tool_name} error: {error}")
+                self._append_gap_record(
+                    record.tool_name,
+                    str(error),
+                    session.subagent_id,
+                    record.tool_input,
+                )
 
         # Get agent info for logging
         session = self.sessions.get(record.parent_tool_use_id)
