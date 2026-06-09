@@ -1,3 +1,5 @@
+Project made for assessment for BusinessLabs.org
+My id is 2026-2400
 # Claude Agent SDK Demos
 
 > ⚠️ **IMPORTANT**: These are demo applications by Anthropic. They are intended for local development only and should NOT be deployed to production or used at scale.
